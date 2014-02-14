@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- meta -->
+        <meta charset="utf-8" />
+        <title>Customs Tests</title>
+        
+        <!-- styles -->
+        <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
+    </head>
+
+    <body>
+
+        <div id="workboard" style="position: absolute;"></div>
+
+        <div id="mocha"></div>
+
+        <script id="form-tmpl" type="text/tmpl">
+        <form id="form">
+          <input type="text" name="name">
+          <input type="radio" name="sex" value="male">
+          <input type="radio" name="sex" value="female">
+          <input type="radio" name="handedness" value="left">
+          <input type="radio" name="handedness" value="right" checked>
+          <select name="country">
+            <option>Select</option>
+            <option>Canada</option>
+            <option>United States</option>
+          </select>
+          <input type="checkbox" name="interests" value="tech">
+          <input type="checkbox" name="interests" value="sports">
+          <textarea name="bio"></textarea>
+        </form>
+        </script>
+
+        <!-- tests -->
+        <script src="../libs/requirejs/require.js"></script>
+        <script>
+            var curURL  = window.location.href.toString(),
+                curDir  = curURL.slice(0, curURL.lastIndexOf('/')),
+                rootDir = curDir.slice(0, curDir.lastIndexOf('/'));
+
+            require.config({
+              urlArgs: "bust=" + (new Date()).getTime(),
+              baseUrl: '../src',
+              paths: {
+                'jquery'         : rootDir + '/libs/jquery/jquery',
+                'underscore'     : rootDir + '/libs/underscore/underscore',
+                'async'          : rootDir + '/libs/async/lib/async',
+                'customs'        : rootDir + '/libs/customs.js/dist/customs',
+                'fakey'          : rootDir + '/libs/fakey/dist/fakey',
+                'proclaim'       : rootDir + '/node_modules/proclaim/lib/proclaim',
+                'backbone'       : rootDir + '/libs/backbone/backbone',
+                'backbone.epoxy' : rootDir + '/libs/backbone.epoxy/backbone.epoxy',
+                'cocktail'       : rootDir + '/libs/cocktail/cocktail',
+                'mocha'          : rootDir + '/node_modules/mocha/mocha'
+              },
+              shim: {
+                'underscore': {
+                  exports: '_'
+                },
+                'backbone': {
+                  deps: ['underscore', 'jquery'],
+                  exports: 'Backbone'
+                },
+                'cocktail': {
+                  deps: ['underscore']
+                }
+              }
+            });
+
+            require(['require', 'mocha'], function(require) {
+              // mocha setup
+              mocha.setup('bdd');
+              mocha.reporter('html');
+              // begin tests
+              require([
+                './bb-customs.js'
+              ], function(require) {
+                return (window.mochaPhantomJS)
+                  ? mochaPhantomJS.run()
+                  : mocha.run();
+              });
+            });
+        </script>
+    </body>
+</html>
