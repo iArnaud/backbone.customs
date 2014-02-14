@@ -1,4 +1,4 @@
-backbone.customs.js [![Build Status](https://travis-ci.org/firstopinion/bb-customs.js.png)](https://travis-ci.org/firstopinion/bb-customs.js) [![Selenium Test Status](https://saucelabs.com/buildstatus/fo-bb-customs)](https://saucelabs.com/u/fo-bb-customs)
+bb-customs.js [![Build Status](https://travis-ci.org/firstopinion/bb-customs.js.png)](https://travis-ci.org/firstopinion/bb-customs.js) [![Selenium Test Status](https://saucelabs.com/buildstatus/fo-bb-customs)](https://saucelabs.com/u/fo-bb-customs)
 ===================
 
 Backbone binding for customs.js

@@ -79,7 +79,7 @@ module.exports = function (grunt) {
             'customs'        : '../libs/customs.js/dist/customs',
             'backbone'       : '../libs/backbone/backbone',
             'backbone.epoxy' : '../libs/backbone.epoxy/backbone.epoxy',
-            'cocktail'       : '../libs/cocktail/cocktail'
+            'cocktail'       : '../libs/cocktail/Cocktail'
           },
           shim: {
             'underscore': {

@@ -1,6 +1,6 @@
 {
-  "name": "backbone.customs.js",
-  "version": "0.0.1",
+  "name": "bb-customs.js",
+  "version": "0.0.2",
   "description": "Backbone binding for customs.js",
   "author": "Jarid Margolin <jarid@firstopinion.co>",
   "repository": {
