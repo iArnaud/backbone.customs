@@ -4,38 +4,19 @@
  * Copyright (c) 2014
  */
 
+// Use named AMD modules while authoring libraries. Better consistency
+// when using amdclean during build.
 define([
   'underscore',
-  'cocktail',
   'backbone.epoxy',
   'customs'
-], function (_, cocktail, Epoxy, customs) {
+], function (_, Epoxy, customs) {
 
-
-// ----------------------------------------------------------------------------
-// Little wrapper for Cocktail - I <3 Inheritance
-// ----------------------------------------------------------------------------
-var createMixin = function () {
-  // Oh Javascript... whyyyyyyy?
-  var args = Array.prototype.slice.call(arguments, 0);
-
-  // A little trickery to move the last item to be the first item
-  // This is purely done for a prettier interface. Probably not
-  // great for performance
-  var mixin = args.pop();
-  args.unshift(mixin);
-
-  // Mix my cocktail
-  cocktail.mixin.apply(this, args);
-
-  // Return the result
-  return mixin;
-};
 
 // ----------------------------------------------------------------------------
 // Model Mixin
 // ----------------------------------------------------------------------------
-var model = createMixin(Epoxy.View.mixin(), {
+var model = _.extend(Epoxy.View.mixin(), {
   //
   // Validate using customs
   //
@@ -48,7 +29,7 @@ var model = createMixin(Epoxy.View.mixin(), {
     var validation = customs.check(attrs, _.extend(this.customs, options.customs || {}));
 
     if (!validation.isValid) {
-      this._addValidationErr(validation.errs);
+      this._updateValidation(attrs, validation.errs);
       return validation.errs;
     }
   },
@@ -56,12 +37,15 @@ var model = createMixin(Epoxy.View.mixin(), {
   //
   // Add errs to validationErr obj and trigger invalid:prop
   //
-  _addValidationErr: function (errs) {
-    for (var key in errs) {
-      this.validationErr = this.validationErr || {};
-      this.validationErr[key] = errs[key];
-
-      this.trigger('invalid:attribute', key, this.validationErr[key]);
+  _updateValidation: function (attrs, errs) {
+    for (var key in attrs) {
+      if (errs[key]) {
+        this.validationErr = this.validationErr || {};
+        this.validationErr[key] = errs[key];
+        this.trigger('invalid:attribute', key, this.validationErr[key]);
+      } else {
+        this.trigger('valid:attribute', key);
+      }
     }
   }
 });
@@ -69,11 +53,11 @@ var model = createMixin(Epoxy.View.mixin(), {
 // ----------------------------------------------------------------------------
 // View Mixin
 // ----------------------------------------------------------------------------
-var view = createMixin(Epoxy.View.mixin(), {
+var view = _.extend(Epoxy.View.mixin(), {
   //
   //
   //
-  initialize: function (opts) {
+  render: function (opts) {
     // Setup binding for form elements
     if (typeof this.bindings !== 'object') {
       this._createFormBindings();
@@ -132,14 +116,14 @@ var view = createMixin(Epoxy.View.mixin(), {
   },
 
   //
-  //
+  // Return checked radio value or empty string
   //
   _defaultRadio: function (el) {
     return this.$el.find(this._createAttrSel('name', el.name) + ':checked').val() || '';
   },
 
   //
-  //
+  // Return array of populated checkbox values or empty array
   //
   _defaultCheckbox: function (el) {
     var value = [];
@@ -151,7 +135,7 @@ var view = createMixin(Epoxy.View.mixin(), {
   },
 
   //
-  //
+  // Display selected option
   //
   _defaultSelect: function (el) {
     var selected = $(el).find(':selected')[0];
@@ -159,10 +143,10 @@ var view = createMixin(Epoxy.View.mixin(), {
   },
 
   //
-  //
+  // Display element value or empty string
   //
   _defaultDefault: function (el) {
-    return el.value;
+    return el.value || '';
   },
 
   //

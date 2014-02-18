@@ -17,16 +17,18 @@ define([
 ], function ($, async, fakey, assert, Backbone, cocktail, bbCustoms) {
 
 
+// ----------------------------------------------------------------------------
 // Scope
+// ----------------------------------------------------------------------------
 var $workboard = $('#workboard'),
-    formHTML = $('#form-tmpl').html();
+    view;
 
 // Classes
 var Person, PersonView;
 
-//
-// Helper method to populate form
-//
+// ----------------------------------------------------------------------------
+// Helper Methods
+// ----------------------------------------------------------------------------
 var populateForm = function (callback) {
   async.series([
     function (next) {
@@ -68,13 +70,15 @@ var populateForm = function (callback) {
 //   ], callback);
 // };
 
+// ----------------------------------------------------------------------------
+// Tests
+// ----------------------------------------------------------------------------
 //
 // Test integration with epoxy bindings
 //
 var testBindings = function () {
   it('Should create undeclared model attributes on init', function () {
-    var view = new PersonView({ model: new Person() });
-
+    // Check init values
     assert.equal(view.model.attributes.name, '');
     assert.equal(view.model.attributes.sex, '');
     assert.equal(view.model.attributes.handedness, 'right');
@@ -85,10 +89,9 @@ var testBindings = function () {
 
 
   it('Should correctly populate model on user interaction', function (done) {
-    var view = new PersonView({ model: new Person() });
-    
     // Async form population
     populateForm(function () {
+      // Check binding values
       assert.deepEqual(view.model.attributes, {
         sex: 'female',
         handedness: 'left',
@@ -97,6 +100,8 @@ var testBindings = function () {
         name: 'Stacy',
         bio: 'The only highlander'
       });
+
+      // Async callback
       done();
     });
   });
@@ -107,18 +112,12 @@ var testBindings = function () {
 //
 var testEvents = function () {
   it('Should trigger invalid if validation fails', function (done) {
-    var view = new PersonView({ model: new Person() });
-
-    // Set listener
+    // Set listener and call validation
     view.model.on('invalid', function () { done(); }, this);
-
-    // Calls validation
     view.model.save();
   });
 
   it('Should trigger invalid:attribute for each attribute', function (done) {
-    var view = new PersonView({ model: new Person() });
-
     // Set listener
     var count = 0;
     view.model.on('invalid:attribute', function () {
@@ -131,9 +130,10 @@ var testEvents = function () {
   });
 };
 
-// Test please
+// ----------------------------------------------------------------------------
+// Describe
+// ----------------------------------------------------------------------------
 describe('backbone.customs', function () {
-
   // Create classes before test
   before(function () {
     // I <3 Inheritance with mixins
@@ -155,7 +155,13 @@ describe('backbone.customs', function () {
     // View Class - Used in each case
     PersonView = Backbone.View.extend({
       mixins: [bbCustoms.view],
-      el: '#form'
+
+      // Template
+      template: _.template($('#form-tmpl').html()),
+
+      // Render html
+      initialize: function () { this.render(); },
+      render: function() { this.$el.html(this.template()); }
     });
   });
 
@@ -166,14 +172,16 @@ describe('backbone.customs', function () {
 
   // Add blank form before each test
   beforeEach(function () {
-    $workboard.html(formHTML);
+    view = new PersonView({ model: new Person() });
+    $workboard.append(view.el);
   });
 
   // Clear workboard after each test
   afterEach(function () {
-    $workboard.html('');
+    view.remove();
   });
 
+  // Tests
   describe('bindings', testBindings);
   describe('events', testEvents);
 });

@@ -1,16 +1,15 @@
 {
   "name": "bb-customs.js",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "dependencies": {
     "underscore": "1.6.0",
-    "backbone": "1.1.0",
     "backbone.epoxy": "1.1.0",
     "cocktail": "0.5.1",
-    "customs.js": "0.0.2"
+    "customs.js": "0.0.2",
+    "jquery": "1.9.1"
   },
   "devDependencies": {
     "requirejs": "2.1.9",
-    "jquery": "1.9.1",
     "async": "0.2.10",
     "fakey": "0.0.7"
   },

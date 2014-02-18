@@ -67,7 +67,12 @@ module.exports = function (grunt) {
           optimize: 'none',
           skipModuleInsertion: true,
           onBuildWrite: function(name, path, contents) {
-            return require('amdclean').clean(contents);
+            return require('amdclean').clean({
+              code: contents,
+              escodegen: {
+                format: { indent: { style: '  '} }
+              }
+            });
           },
           wrap: {
             startFile: ['src/intro.js'],
@@ -78,8 +83,7 @@ module.exports = function (grunt) {
             'underscore'     : '../libs/underscore/underscore',
             'customs'        : '../libs/customs.js/dist/customs',
             'backbone'       : '../libs/backbone/backbone',
-            'backbone.epoxy' : '../libs/backbone.epoxy/backbone.epoxy',
-            'cocktail'       : '../libs/cocktail/Cocktail'
+            'backbone.epoxy' : '../libs/backbone.epoxy/backbone.epoxy'
           },
           shim: {
             'underscore': {
@@ -88,15 +92,14 @@ module.exports = function (grunt) {
             'backbone': {
               deps: ['underscore', 'jquery'],
               exports: 'Backbone'
-            },
-            'cocktail': {
-              deps: ['underscore']
             }
           },
           exclude: [
             'jquery',
             'underscore',
-            'backbone'
+            'backbone',
+            'backbone.epoxy',
+            'customs'
           ]
         }
       }
