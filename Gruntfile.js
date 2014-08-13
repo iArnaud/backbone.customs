@@ -1,161 +1,266 @@
+/*!
+ * Gruntfile.js
+ * 
+ * Copyright (c) 2014
+ */
+
+
+// ----------------------------------------------------------------------------
+// GRUNT
+// ----------------------------------------------------------------------------
+
 module.exports = function (grunt) {
 
+
+// Load all grunt tasks
+require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
+
+
 // Browsers
-  var browsers = [
-    {
-      browserName: 'firefox',
-      platform: 'WIN8'
-    },
-    {
-      browserName: 'chrome',
-      platform: 'WIN8'
-    },
-    {
-      browserName: 'opera',
-      platform: 'WIN7'
-    },
-    {
-      browserName: 'internet explorer',
-      platform: 'WIN8',
-      version: '10'
-    },
-    {
-      browserName: 'internet explorer',
-      platform: 'VISTA',
-      version: '9'
-    },
-    {
-      browserName: 'internet explorer',
-      platform: 'XP',
-      version: '8'
+var browsers = [
+  // Latest Versions
+  { browserName: 'firefox', platform: 'WIN8' },
+  { browserName: 'chrome', platform: 'WIN8' },
+  // { browserName: 'opera', platform: 'WIN7' },
+
+  // Internet Explorer
+  { browserName: 'internet explorer', platform: 'WIN8', version: '10' },
+  { browserName: 'internet explorer', platform: 'VISTA', version: '9' },
+  { browserName: 'internet explorer', platform: 'XP', version: '8' }
+];
+
+
+// Config
+grunt.initConfig({
+
+  // --------------------------------------------------------------------------
+  // PKG CONFIG
+  // --------------------------------------------------------------------------
+
+  'pkg': grunt.file.readJSON('package.json'),
+
+
+  // --------------------------------------------------------------------------
+  // JSHINT
+  // --------------------------------------------------------------------------
+
+  'jshint': {
+    src: [
+      'Gruntfile.js',
+      'src/**/*.js',
+      'test/**/*.js'
+    ],
+    options: {
+      jshintrc: '.jshintrc',
+      force: true
     }
-  ];
+  },
 
-  grunt.initConfig({
-    // USE PKG INFO
-    'pkg': grunt.file.readJSON('package.json'),
 
-    // JSHINT
-    'jshint': {
-      all: [
-        'Gruntfile.js',
-        'src/*.js',
-        '!src/intro.js',
-        '!src/outro.js'
-      ],
+  // --------------------------------------------------------------------------
+  // CLEAN (EMPTY DIRECTORIES)
+  // --------------------------------------------------------------------------
+
+  'clean': {
+    js: ['dist'],
+    build: ['dist/*.*']
+  },
+
+
+  // --------------------------------------------------------------------------
+  // REQUIREJS BUILD
+  // --------------------------------------------------------------------------
+
+  'requirejs': {
+    compile: {
       options: {
-        force: true,
-        // Bad line breaking before '?'.
-        '-W014': true,
-        // Expected a conditional expression and instead saw an assignment.
-        '-W084': true,
-        // Is better written in dot notation.
-        '-W069': true
-      }
-    },
+        name: '_index',
+        baseUrl: 'src',
+        out: 'dist/backbone.customs.js',
+        optimize: 'none',
+        skipModuleInsertion: true,
+        paths: {
+          'backbone.customs' : '../src',
+          'jquery'           : '../node_modules/jquery/dist/jquery',
+          'underscore'       : '../node_modules/underscore/underscore',
+          'backbone'         : '../node_modules/backbone/backbone',
+          'backbone.epoxy'   : '../node_modules/backbone.epoxy/backbone.epoxy',
+          'customs'          : '../node_modules/customs.js/dist/amd'
+        },
+        exclude: [
+          'underscore',
+          'backbone.epoxy'
+        ],
+        onModuleBundleComplete: function(data) {
+          var fs = require('fs'),
+            amdclean = require('amdclean'),
+            outputFile = data.path;
 
-    // CLEAN
-    'clean': ['dist'],
-
-    // REQUIRE
-    'requirejs': {
-      compile: {
-        options: {
-          name: 'bb-customs',
-          baseUrl: 'src',
-          out: 'dist/bb-customs.js',
-          optimize: 'none',
-          skipModuleInsertion: true,
-          onBuildWrite: function(name, path, contents) {
-            return require('amdclean').clean({
-              code: contents,
-              escodegen: {
-                format: { indent: { style: '  '} }
+          fs.writeFileSync(outputFile, amdclean.clean({
+            filePath: outputFile,
+            prefixMode: 'camelCase',
+            wrap: false,
+            escodegen: {
+              format: {
+                indent: { style: '  ' }
               }
-            });
-          },
-          wrap: {
-            startFile: ['src/intro.js'],
-            endFile: ['src/outro.js']
-          },
-          paths: {
-            'jquery'         : '../libs/jquery/jquery',
-            'underscore'     : '../libs/underscore/underscore',
-            'customs'        : '../libs/customs.js/dist/customs',
-            'backbone'       : '../libs/backbone/backbone',
-            'backbone.epoxy' : '../libs/backbone.epoxy/backbone.epoxy'
-          },
-          shim: {
-            'underscore': {
-              exports: '_'
-            },
-            'backbone': {
-              deps: ['underscore', 'jquery'],
-              exports: 'Backbone'
             }
-          },
-          exclude: [
-            'jquery',
-            'underscore',
-            'backbone',
-            'backbone.epoxy',
-            'customs'
-          ]
+          }));
         }
       }
-    },
-
-    // MINIFY JS
-    'uglify': {
-      all: {
-        src: 'dist/bb-customs.js',
-        dest: 'dist/bb-customs.min.js'
-      }
-    },
-
-    // SERVER
-    'connect': {
-      server: {
-        options: {
-          base: '',
-          port: 9999
-        }
-      }
-    },
-
-    // BROWSER TESTS
-    'saucelabs-mocha': {
-      all: {
-        options: {
-          urls: ['http://127.0.0.1:9999/test/_runner.html'],
-          build: process.env.TRAVIS_JOB_ID || '<%= pkg.version %>',
-          tunnelTimeout: 5,
-          concurrency: 3,
-          browsers: browsers,
-          testname: 'bb-customs'
-        }
-      }
-    },
-
-    // PHANTOM TESTS
-    'mocha_phantomjs': {
-      all: ['test/_runner.html']
     }
-  });
+  },
 
-  // Load plugins
-  grunt.loadNpmTasks('grunt-contrib-requirejs');
-  grunt.loadNpmTasks('grunt-contrib-connect');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-mocha-phantomjs');
-  grunt.loadNpmTasks('grunt-saucelabs');
+  // --------------------------------------------------------------------------
+  // UMD WRAP
+  // --------------------------------------------------------------------------
+
+  'umd': {
+    all: {
+      src: 'dist/backbone.customs.js',
+      objectToExport: 'index',
+      globalAlias: 'BBCustoms',
+      dest: 'dist/backbone.customs.js',
+      deps: {
+        'default': ['underscore', 'backboneepoxy'],
+        amd: ['underscore', 'backbone.epoxy'],
+        cjs: ['underscore', 'backbone.epoxy'],
+        global: ['underscore', 'Backbone.Epoxy']
+      }
+    }
+  },
 
 
-  // Tasks    
-  grunt.registerTask('default', ['jshint', 'clean', 'requirejs', 'uglify']);
-  grunt.registerTask('test-local', ['mocha_phantomjs']);
-  grunt.registerTask('test', ['connect', 'saucelabs-mocha']);
+  // --------------------------------------------------------------------------
+  // MINIFY JS
+  // --------------------------------------------------------------------------
+
+  'uglify': {
+    all: {
+      expand: true,
+      cwd: 'dist/',
+      src: ['**/*.js'],
+      dest: 'dist/',
+      ext: '.min.js'
+    }
+  },
+
+
+  // --------------------------------------------------------------------------
+  // CREATE COMMONJS VERSION IN DIST
+  // --------------------------------------------------------------------------
+
+  'nodefy': {
+    all: {
+      expand: true,
+      src: ['**/*.js'],
+      cwd: 'src/',
+      dest: 'dist/common'
+    }
+  },
+
+
+  // --------------------------------------------------------------------------
+  // Copy Parts
+  // --------------------------------------------------------------------------
+
+  'copy': {
+    js: {
+      expand: true,
+      src: ['**/*.js'],
+      cwd: 'src',
+      dest: 'dist/amd'
+    }
+  },
+
+
+  // --------------------------------------------------------------------------
+  // WATCH FILES
+  // --------------------------------------------------------------------------
+
+  'watch': {
+    options: {
+      spawn: true
+    },
+    grunt: {
+      files: ['Gruntfile.js'],
+      tasks: ['build'],
+      options: { livereload: true }
+    },
+    tests: {
+      files: ['test/**/*.*'],
+      options: { livereload: true }
+    },
+    js: {
+      files: ['src/**/*.js'],
+      tasks: ['build:js'],
+      options: { livereload: true }
+    }
+  },
+
+
+  // --------------------------------------------------------------------------
+  // SERVER
+  // --------------------------------------------------------------------------
+
+  'connect': {
+    server: {
+      options: { base: '', port: 9999 }
+    },
+  },
+
+
+  // --------------------------------------------------------------------------
+  // TEST PLATFORM (SAUCELABS) - PUBLIC
+  // --------------------------------------------------------------------------
+
+  'saucelabs-mocha': {
+    all: {
+      options: {
+        urls: [
+          'http://127.0.0.1:9999/test/_runner.html',
+          'http://127.0.0.1:9999/test/_dist-amd.html',
+          'http://127.0.0.1:9999/test/_dist-umd.html'
+        ],
+        build: process.env.TRAVIS_JOB_ID || '<%= pkg.version %>',
+        tunnelTimeout: 5,
+        concurrency: 3,
+        browsers: browsers,
+        testname: 'marionette.dynamicLayout'
+      }
+    }
+  },
+
+
+  // --------------------------------------------------------------------------
+  // TEST LOCAL - PUBLIC
+  // --------------------------------------------------------------------------
+
+  'mocha_phantomjs': {
+    all: [
+      'test/_runner.html',
+      'test/_dist-amd.html',
+      'test/_dist-umd.html'
+    ]
+  }
+
+});
+
+
+// DEFAULT
+grunt.registerTask('default', ['build']);
+
+// BUILD
+grunt.registerTask('build', ['build:js']);
+grunt.registerTask('build:js', ['clean:js', 'jshint', 'requirejs', 'umd', 'uglify', 'copy:js', 'nodefy']);
+
+// TEST
+grunt.registerTask('test', ['test-local']);
+grunt.registerTask('test-local', ['jshint', 'mocha_phantomjs']);
+grunt.registerTask('test-sauce', ['jshint', 'connect', 'saucelabs-mocha']);
+
+// DEVELOP
+grunt.registerTask('dev', ['build', 'connect', 'watch']);
+
 
 };

@@ -11,43 +11,23 @@
 
   <body>
     <!-- content -->
+    <div id="workboard"></div>
     <div id="mocha"></div>
-    <div id="workboard" style="position: absolute;"></div>
-
-    <script id="form-tmpl" type="text/tmpl">
-      <form id="form">
-        <input type="text" name="name">
-        <input type="radio" name="sex" value="male">
-        <input type="radio" name="sex" value="female">
-        <input type="radio" name="handedness" value="left">
-        <input type="radio" name="handedness" value="right" checked>
-        <select name="country">
-          <option>Select</option>
-          <option>Canada</option>
-          <option>United States</option>
-        </select>
-        <input type="checkbox" name="interests" value="tech">
-        <input type="checkbox" name="interests" value="sports">
-        <textarea name="bio"></textarea>
-      </form>
-    </script>
 
     <!-- tests -->
     <script src="../node_modules/requirejs/require.js"></script>
     <script src="../node_modules/easy-amdtest/dist/easy-amdtest.js"></script>
     <script>
       var testSuite = new EasyAMDTest({
-        baseUrl: '../src',
+        baseUrl: '../dist',
         urlArgs: 'bust=' + (new Date()).getTime(),
         paths: {
-          'backbone.customs' : '/src',
+          'backbone.customs' : '/dist/backbone.customs',
           'mocha'            : '/node_modules/mocha/mocha',
           'proclaim'         : '/node_modules/proclaim/lib/proclaim',
           'sinon'            : '/node_modules/sinon/pkg/sinon',
           'jquery'           : '/node_modules/jquery/dist/jquery',
           'underscore'       : '/node_modules/underscore/underscore',
-          'async'            : '/node_modules/async/lib/async',
-          'fakey'            : '/node_modules/fakey/dist/fakey',
           'backbone'         : '/node_modules/backbone/backbone',
           'backbone.epoxy'   : '/node_modules/backbone.epoxy/backbone.epoxy',
           'customs'          : '/node_modules/customs.js/dist/amd'
@@ -60,7 +40,7 @@
       }).run({
         name: 'mocha',
         tests: [
-          './backbone.customs.js'
+          './_dist-umd.js'
         ]
       });
     </script>
