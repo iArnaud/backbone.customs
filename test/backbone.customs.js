@@ -1,10 +1,10 @@
 /*
- * test/bb-customs.js:
+ * test/backbone.customs.js:
  *
  * (C) 2014 First Opinion
  * MIT LICENCE
  *
- */ 
+ */
 
 define([
   'underscore',
@@ -12,19 +12,36 @@ define([
   'proclaim',
   'sinon',
   'async',
-  'fakey',
+  'fakey/fakey',
   'backbone',
-  'backbone.customs/model',
-  'backbone.customs/view'
-], function (_, $, assert, sinon, async, fakey, Backbone, model, view) {
+  'multiline',
+  'model',
+  'view'
+], function (_, $, assert, sinon, async, fakey, Backbone, multiline, model, view) {
 
 
-// ----------------------------------------------------------------------------
-// Reusable
-// ----------------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
+ * reusable
+ * ---------------------------------------------------------------------------*/
 
 // Cache
-var formHtml = $('#form-tmpl').html();
+var formHtml = multiline(function(){/*
+  <form id="form">
+    <input type="text" name="name">
+    <input type="radio" name="sex" value="male">
+    <input type="radio" name="sex" value="female">
+    <input type="radio" name="handedness" value="left">
+    <input type="radio" name="handedness" value="right" checked>
+    <select name="country">
+      <option>Select</option>
+      <option>Canada</option>
+      <option>United States</option>
+    </select>
+    <input type="checkbox" name="interests" value="tech">
+    <input type="checkbox" name="interests" value="sports">
+    <textarea name="bio"></textarea>
+  </form>
+*/});
 
 // Base Classes
 var CustomsModel = Backbone.Model.extend(model);
@@ -52,9 +69,9 @@ var PersonView = CustomsView.extend({
 });
 
 
-// ----------------------------------------------------------------------------
-// Helper Methods
-// ----------------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
+ * helper
+ * ---------------------------------------------------------------------------*/
 
 var enterName = function (next) {
   fakey.str($('[name="name"]')[0], 'Stacy', next);
@@ -81,9 +98,9 @@ var populate = function (callback) {
 };
 
 
-// ----------------------------------------------------------------------------
-// Tests
-// ----------------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
+ * test
+ * ---------------------------------------------------------------------------*/
 
 describe('backbone.customs', function () {
 
@@ -107,9 +124,9 @@ describe('backbone.customs', function () {
   });
 
 
-  // --------------------------------------------------------------------------
-  // bindings
-  // --------------------------------------------------------------------------
+  /* ---------------------------------------------------------------------------
+   * bindings
+   * -------------------------------------------------------------------------*/
 
   describe('bindings', function () {
 
@@ -144,9 +161,9 @@ describe('backbone.customs', function () {
   });
 
 
-  // --------------------------------------------------------------------------
-  // events
-  // --------------------------------------------------------------------------
+  /* ---------------------------------------------------------------------------
+   * events
+   * -------------------------------------------------------------------------*/
 
   describe('events', function () {
 

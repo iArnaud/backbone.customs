@@ -1,21 +1,25 @@
-(function(root, factory) {
-    if(typeof exports === 'object') {
-        module.exports = factory(require('underscore'), require('backbone.epoxy'));
-    }
-    else if(typeof define === 'function' && define.amd) {
-        define(['underscore', 'backbone.epoxy'], factory);
-    }
-    else {
-        root['BBCustoms'] = factory(root.underscore, root.Backbone.Epoxy);
-    }
-}(this, function(underscore, backboneepoxy) {
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    // AMD. Register as an anonymous module.
+    define(['underscore', 'backbone.epoxy'], function (underscore, backboneepoxy) {
+      return (root.returnExportsGlobal = factory(underscore, backboneepoxy));
+    });
+  } else if (typeof exports === 'object') {
+    // Node. Does not work with strict CommonJS, but
+    // only CommonJS-like enviroments that support module.exports,
+    // like Node.
+    module.exports = factory(require('underscore'), require('backbone.epoxy'));
+  } else {
+    root['BackboneCustoms'] = factory(root.underscore, root.Backbone.Epoxy);
+  }
+}(this, function (underscore, backboneepoxy) {
 
 /*!
  * utils.js
  * 
  * Copyright (c) 2014
  */
-var customsUtils, customsChecks, customsExam, customsCustoms, backbonecustomsModel, backbonecustomsView, index;
+var customsUtils, customsChecks, customsExam, customsCustoms, model, view, backbonecustoms;
 customsUtils = {
   /**
    * Determine if an object is empty.
@@ -585,10 +589,10 @@ customsCustoms = function (Exam) {
  * 
  * Copyright (c) 2014
  */
-backbonecustomsModel = function (_, Epoxy, Customs) {
-  // ----------------------------------------------------------------------------
-  // model mixin
-  // ----------------------------------------------------------------------------
+model = function (_, Epoxy, Customs) {
+  /* -----------------------------------------------------------------------------
+   * model
+   * ---------------------------------------------------------------------------*/
   return _.extend(Epoxy.View.mixin(), {
     /**
      * Validate model or passed attributes.
@@ -651,10 +655,10 @@ backbonecustomsModel = function (_, Epoxy, Customs) {
  * 
  * Copyright (c) 2014
  */
-backbonecustomsView = function (_, Epoxy) {
-  // ----------------------------------------------------------------------------
-  // view
-  // ----------------------------------------------------------------------------
+view = function (_, Epoxy) {
+  /* -----------------------------------------------------------------------------
+   * view
+   * ---------------------------------------------------------------------------*/
   return _.extend(Epoxy.View.mixin(), {
     /**
      * Bind elements to view.
@@ -674,9 +678,9 @@ backbonecustomsView = function (_, Epoxy) {
       // so I am doing so manually.
       this.applyBindings();
     },
-    // --------------------------------------------------------------------------
-    // private
-    // --------------------------------------------------------------------------
+    /* ---------------------------------------------------------------------------
+     * private
+     * -------------------------------------------------------------------------*/
     /**
      * Create "bind" object. Add any undefined
      * model attributes.
@@ -732,9 +736,9 @@ backbonecustomsView = function (_, Epoxy) {
     _selector: function (name, val) {
       return '[' + name + '="' + val + '"]';
     },
-    // --------------------------------------------------------------------------
-    // shared methods
-    // --------------------------------------------------------------------------
+    /* ---------------------------------------------------------------------------
+     * shared
+     * -------------------------------------------------------------------------*/
     /**
      * Radios and checkboxes use checked handler for binding
      * and name + value attr for selector
@@ -759,9 +763,9 @@ backbonecustomsView = function (_, Epoxy) {
       var selector = this._selector('name', name);
       this.bindings[selector] = 'value:' + name + ',events:["keyup"]';
     },
-    // --------------------------------------------------------------------------
-    // type methods
-    // --------------------------------------------------------------------------
+    /* ---------------------------------------------------------------------------
+     * types
+     * -------------------------------------------------------------------------*/
     /**
      * Element value or empty string
      *
@@ -839,20 +843,16 @@ backbonecustomsView = function (_, Epoxy) {
   });
 }(underscore, backboneepoxy);
 /*!
- * _index.js
+ * backbone.customs.js
  * 
  * Copyright (c) 2014
  */
-index = function (model, view) {
-  // ----------------------------------------------------------------------------
-  // Expose
-  // ----------------------------------------------------------------------------
-  return {
-    model: model,
-    view: view
-  };
-}(backbonecustomsModel, backbonecustomsView);
+backbonecustoms = {
+  model: model,
+  view: view
+};
 
-return index;
+return backboneCustoms;
+
 
 }));

@@ -1,0 +1,14 @@
+{
+  "fileName": "backbone.customs",
+  "globalAlias": "BackboneCustoms",
+  "exclude": [
+    "underscore",
+    "backbone.epoxy"
+  ],
+  "dependencies": {
+    "default": ["underscore", "backboneepoxy"],
+    "amd": ["underscore", "backbone.epoxy"],
+    "cjs": ["underscore", "backbone.epoxy"],
+    "global": ["underscore", "Backbone.Epoxy"]
+  }
+}

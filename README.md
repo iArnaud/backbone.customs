@@ -1,4 +1,4 @@
-backbone.customs.js [![Build Status](https://travis-ci.org/firstopinion/backbone.customs.js.png)](https://travis-ci.org/firstopinion/backbone.customs.js)
+backbone.customs [![Build Status](https://travis-ci.org/firstopinion/backbone.customs.png)](https://travis-ci.org/firstopinion/backbone.customs)
 ==========
 
 Backbone binding for customs.js
@@ -19,7 +19,7 @@ npm install
 **Run/View**
 
 ```
-grunt test
+npm test
 ```
 
 

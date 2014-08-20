@@ -1,19 +1,20 @@
 /*!
- * Gruntfile.js
+ * backbone.customs.js
  * 
  * Copyright (c) 2014
  */
 
-// 3rd party
-var easybuild = require('easy-build');
+var model = require('./model');
+var view = require('./view');
 
 
 /* -----------------------------------------------------------------------------
- * easy-build
+ * export
  * ---------------------------------------------------------------------------*/
 
-module.exports = function (grunt) {
-
-  easybuild.load(grunt);
-
+module.exports = {
+  model: model,
+  view: view
 };
+
+

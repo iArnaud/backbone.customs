@@ -1,0 +1,12 @@
+{
+  "async"          : "/node_modules/async/lib/async",
+  "backbone"       : "/node_modules/backbone/backbone",
+  "backbone.epoxy" : "/node_modules/backbone.epoxy/backbone.epoxy",
+  "customs"        : "/node_modules/customs.js/dist/amd",
+  "fakey"          : "/node_modules/fakey.js/dist/amd",
+  "jquery"         : "/node_modules/jquery/dist/jquery",
+  "multiline"      : "/node_modules/multiline/browser",
+  "proclaim"       : "/node_modules/proclaim/lib/proclaim",
+  "sinon"          : "/node_modules/sinon/pkg/sinon",
+  "underscore"     : "/node_modules/underscore/underscore"
+}
