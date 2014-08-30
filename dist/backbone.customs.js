@@ -593,7 +593,7 @@ model = function (_, Epoxy, Customs) {
   /* -----------------------------------------------------------------------------
    * model
    * ---------------------------------------------------------------------------*/
-  return _.extend(Epoxy.View.mixin(), {
+  return _.extend(Epoxy.Model.mixin(), {
     /**
      * Validate model or passed attributes.
      *

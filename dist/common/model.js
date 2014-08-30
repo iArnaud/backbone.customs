@@ -13,7 +13,7 @@ var Customs = require('customs/customs');
  * model
  * ---------------------------------------------------------------------------*/
 
-module.exports = _.extend(Epoxy.View.mixin(), {
+module.exports = _.extend(Epoxy.Model.mixin(), {
 
   /**
    * Validate model or passed attributes.
